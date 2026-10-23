@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head><title>Live Location Test</title></head>
+    <body>
+        <h2>Ride 1 - Live Tracker</h2>
+        <input type="text" id="gpsData" placeholder="Lat, Lng daalein (e.g. 19.1, 72.8)">
+        <button onclick="sendLocation()">Bhejo</button>
+        <ul id="messages"></ul>
+
+        <script>
+            // Backend se WebSocket pipeline jodein
+            var ws = new WebSocket("ws://localhost:8000/ws/rides/1");
+            
+            // Jab server se naya location aaye toh list me dikhayein
+            ws.onmessage = function(event) {
+                var messages = document.getElementById('messages');
+                var message = document.createElement('li');
+                var content = document.createTextNode(event.data);
+                message.appendChild(content);
+                messages.appendChild(message);
+            };
+
+            // Jab button click ho toh location server ko bhejein
+            function sendLocation() {
+                var input = document.getElementById("gpsData");
+                ws.send(input.value);
+                input.value = '';
+            }
+        </script>
+    </body>
+</html>
