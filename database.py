@@ -1,9 +1,20 @@
+
+
+import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
-# Isak@123 ko Isak%40123 likha gaya hai taaki URL format break na ho
-DATABASE_URL = "postgresql+psycopg2://postgres:Isak%40123@localhost/bike_pooling_db"
+# Yeh line pehle cloud ka URL check karegi, agar nahi mila toh local use karegi
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:Isak%40123@localhost/bike_pooling_db")
 
-engine = create_engine(DATABASE_URL)
+
+# (Yahan 'postgres:password' aur 'bikepool' ki jagah apni purani local details hi rehne dena)
+
+# Render ka ek chota sa fix (postgres:// ko postgresql:// banata hai)
+if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
+    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
