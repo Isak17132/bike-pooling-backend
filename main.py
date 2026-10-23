@@ -7,9 +7,16 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from sqlalchemy import func
 from typing import List
+from sqlalchemy import text
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
 
+with engine.connect() as conn:
+    conn.execute(text("CREATE EXTENSION IF NOT EXISTS postgis;"))
+    conn.commit()
+
+# Yeh line aapke code mein pehle se hogi:
+models.Base.metadata.create_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 # Yeh code frontend ko backend se data lene ki permission deta hai
